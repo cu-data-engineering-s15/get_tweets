@@ -24,10 +24,21 @@ if __FILE__ == $0
   end
 
   screen_name = ARGV[0]
+  props       = convert_props(load_props)
 
-  props = convert_props(load_props)
+  args    = {props: props, screen_name: screen_name } 
+  twitter = Timeline.new(args)
 
-  # instantiate Timeline
-  # make the request and store tweets in tweets.json
+  puts "Collecting 200 most recent tweets for '#{screen_name}'"
+
+  twitter.collect do |tweets|
+    File.open('tweets.json', 'w') do |f|
+      tweets.each do |tweet|
+        f.puts "#{tweet.to_json}\n"
+      end
+    end
+  end
+
+  puts "DONE."
 
 end
